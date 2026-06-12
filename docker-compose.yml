@@ -9,12 +9,12 @@ services:
     expose:
       - 8000
     environment:
-      - DATABASE_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-fastapi_traefik}:${POSTGRES_PASSWORD:-fastapi_traefik}@db:5432/${POSTGRES_DB:-fastapi_traefik}
     depends_on:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fastapi.rule=Host(`fastapi.localhost`)"
+      - "traefik.http.routers.fastapi.rule=Host(`${APP_DOMAIN:-fastapi.localhost}`)"
   db:
     image: postgres:15-alpine
     volumes:
@@ -22,9 +22,9 @@ services:
     expose:
       - 5432
     environment:
-      - POSTGRES_USER=fastapi_traefik
-      - POSTGRES_PASSWORD=fastapi_traefik
-      - POSTGRES_DB=fastapi_traefik
+      - POSTGRES_USER=${POSTGRES_USER:-fastapi_traefik}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-fastapi_traefik}
+      - POSTGRES_DB=${POSTGRES_DB:-fastapi_traefik}
   traefik:
     image: traefik:v2.9.6
     ports:
